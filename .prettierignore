@@ -1,0 +1,6 @@
+src/contracts/generated.ts
+public/mockServiceWorker.js
+package-lock.json
+work/
+dist/
+node_modules/

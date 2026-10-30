@@ -1,0 +1,13 @@
+import type { components, operations } from './generated';
+export type Customer = components['schemas']['Customer'];
+export type CustomerCreate = components['schemas']['CustomerCreate'];
+export type CustomerPatch = components['schemas']['CustomerPatch'];
+export type CustomerList = components['schemas']['CustomerList'];
+export type Ticket = components['schemas']['Ticket'];
+export type TicketCreate = components['schemas']['TicketCreate'];
+export type TicketPatch = components['schemas']['TicketPatch'];
+export type TicketList = components['schemas']['TicketList'];
+export type ApiErrorBody = components['schemas']['ApiErrorBody'];
+export type PageSize = 10 | 20 | 50;
+export type ListParams = NonNullable<operations['listCustomers']['parameters']['query']>;
+export type TicketParams = NonNullable<operations['listTickets']['parameters']['query']>;

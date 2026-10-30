@@ -1,0 +1,12 @@
+node_modules/
+dist/
+work/
+test-results/
+playwright-report/
+coverage/
+.env*
+!.env.example
+!.env.demo
+.codex/wiki/
+.DS_Store
+outputs/
