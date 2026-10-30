@@ -2,10 +2,10 @@ import { useState, type ReactNode } from 'react';
 import { App, ConfigProvider } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-export function createQueryClient() {
+export function createQueryClient(refetchOnWindowFocus = true) {
   return new QueryClient({
     defaultOptions: {
-      queries: { retry: false, staleTime: 15000, refetchOnWindowFocus: true },
+      queries: { retry: false, staleTime: 15000, refetchOnWindowFocus },
       mutations: { retry: false },
     },
   });
@@ -13,11 +13,13 @@ export function createQueryClient() {
 export function AppProviders({
   children,
   motion = true,
+  refetchOnWindowFocus = true,
 }: {
   children: ReactNode;
   motion?: boolean;
+  refetchOnWindowFocus?: boolean;
 }) {
-  const [client] = useState(createQueryClient);
+  const [client] = useState(() => createQueryClient(refetchOnWindowFocus));
   return (
     <ConfigProvider
       button={{ autoInsertSpace: false }}

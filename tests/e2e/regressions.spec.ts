@@ -80,6 +80,46 @@ test('列表失败可以重试，空场景与无搜索结果可区分', async ({
   await page.getByRole('textbox', { name: '搜索客户名称或邮箱' }).fill('不存在的客户xyz');
   await expect(page.getByText('没有匹配的客户，试试其他关键词')).toBeVisible();
 });
+test('演示页重新获得焦点时保留列表，仍可手动刷新', async ({ page }) => {
+  await page.goto('/customers');
+  await expect(page.getByRole('table')).toBeVisible();
+  await page.evaluate(() => {
+    const now = Date.now;
+    Date.now = () => now() + 20_000;
+    const originalFetch = window.fetch;
+    let requests = 0;
+    window.fetch = (...args) => {
+      if (String(args[0]).includes('/api/customers')) requests += 1;
+      return originalFetch(...args);
+    };
+    Object.assign(window, { __customerRequestsAfterFocus: () => requests });
+    window.dispatchEvent(new Event('focus'));
+  });
+  await page.waitForTimeout(300);
+  expect(
+    await page.evaluate(() =>
+      (
+        window as unknown as {
+          __customerRequestsAfterFocus: () => number;
+        }
+      ).__customerRequestsAfterFocus(),
+    ),
+  ).toBe(0);
+  await expect(page.getByRole('table')).toBeVisible();
+  await page.getByRole('button', { name: '刷新客户列表' }).click();
+  await expect
+    .poll(() =>
+      page.evaluate(() =>
+        (
+          window as unknown as {
+            __customerRequestsAfterFocus: () => number;
+          }
+        ).__customerRequestsAfterFocus(),
+      ),
+    )
+    .toBe(1);
+  await expect(page.getByRole('table')).toBeVisible();
+});
 test('窄屏不产生页面横向溢出，键盘可打开关闭表单并恢复焦点', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/customers');

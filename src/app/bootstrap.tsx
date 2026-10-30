@@ -94,7 +94,7 @@ function Startup() {
 }
 export function bootstrap() {
   createRoot(document.getElementById('root')!).render(
-    <AppProviders>
+    <AppProviders refetchOnWindowFocus={!enabled}>
       <Startup />
     </AppProviders>,
   );
